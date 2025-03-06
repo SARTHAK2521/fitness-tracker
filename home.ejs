@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tracker</title>
+     
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js Library -->
+    <style>
+        /* 🌟 Global Styles */
+        body {
+            font-family: "Poppins", sans-serif;
+            background-color: #121212;
+            color: white;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        /* 🌟 Header */
+        header {
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            color: white;
+            padding: 20px;
+            font-size: 24px;
+            text-transform: uppercase;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
+        }
+
+        header p {
+            font-size: 14px;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        /* 🌟 Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            text-decoration: none;
+            color: white;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: 0.3s ease-in-out;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn.primary { background-color: #007bff; box-shadow: 0px 5px 10px rgba(0, 123, 255, 0.3); }
+        .btn.secondary { background-color: #ff5733; box-shadow: 0px 5px 10px rgba(255, 87, 51, 0.3); }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        /* 🌟 Hero Section */
+        .hero {
+            padding: 50px 20px;
+            text-align: center;
+            background: #1c1c1c;
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+            border-radius: 12px;
+            max-width: 800px;
+            margin: 30px auto;
+        }
+
+        .hero h2 {
+            color: #007bff;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: #bbb;
+            margin-bottom: 20px;
+        }
+
+        /* 🌟 Section Styling */
+        section {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #1c1c1c;
+            border-radius: 12px;
+            box-shadow: 0px 5px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        h2 {
+            color: #007bff;
+            font-size: 22px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        /* 🌟 Heart Rate & Steps Display */
+        .heart-rate-display,
+        .footstep-tracking p {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        /* 🌟 Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .feature-card {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.05);
+        }
+
+        /* 🌟 Footer */
+        footer {
+            background: #222;
+            color: white;
+            padding: 15px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        /* 🌟 Chart Canvas */
+        .chart-container {
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🏋️ Fitness Tracker</h1>
+        <p>Track your workouts, set goals, and stay fit!</p>
+    </header>
+
+    <main>
+
+        <!-- ✅ Hero Section -->
+        <section class="hero">
+            <h2>Welcome to Your Fitness Journey</h2>
+            <p>Monitor progress, log workouts, and achieve your fitness goals.</p>
+            <a href="/workouts" class="btn primary">🏋️ View Workouts</a>
+            <a href="/diet" class="btn secondary">🥗 View Diet Plan</a>
+        </section>
+
+        <!-- ✅ Footstep Tracking -->
+        <section class="footstep-tracking">
+            <h2>🚶‍♂️ Footstep Tracking</h2>
+            <p>See how many steps you've taken today!</p>
+            <button onclick="fetchSteps()" class="btn primary">🔄 Sync with Google Fit</button>
+            <p><strong>Today's Steps:</strong> <span id="stepCount">Loading...</span></p>
+        </section>
+
+        <!-- ✅ Heart Rate Monitoring -->
+        <section class="heart-rate">
+            <h2>❤️ Heart Rate Monitoring</h2>
+            <p>Track your heart rate in real-time.</p>
+            <button onclick="fetchHeartRate()" class="btn primary">📟 Sync Heart Rate</button>
+            <div class="heart-rate-display">
+                <p id="heartRate">-- BPM</p>
+            </div>
+        </section>
+
+        <!-- ✅ Heart Rate Chart -->
+        <div class="chart-container">
+            <canvas id="heartRateChart"></canvas>
+        </div>
+
+        <!-- ✅ Features -->
+        <section class="features">
+            <h2>🔥 Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card"><h3>📊 Track Progress</h3><p>Visualize your progress with charts.</p></div>
+                <div class="feature-card"><h3>🏆 Gamification</h3><p>Earn badges and milestones.</p></div>
+                <div class="feature-card"><h3>🤖 AI Recommendations</h3><p>Get smart workout suggestions.</p></div>
+                <div class="feature-card"><h3>🥗 Personalized Diet Plans</h3><p>Get meal plans to match workouts.</p></div>
+                <div class="feature-card"><h3>🎯 Goal Tracking</h3><p>Set & achieve fitness goals.</p></div>
+                <div class="feature-card"><h3>💬 Community Support</h3><p>Connect & stay motivated.</p></div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2025 Fitness Tracker | Stay Strong, Stay Fit!</p>
+    </footer>
+
+</body>
+</html>
